@@ -1,3 +1,7 @@
+<script>
+  import SignIn from './SignIn.svelte'
+</script>
+
 <section class="w-full px-8 text-gray-700 bg-base-100">
   <div
     class="container flex flex-col flex-wrap items-center justify-between py-5 mx-auto md:flex-row max-w-7xl"
@@ -19,12 +23,7 @@
     </div>
 
     <div class="inline-flex items-center ml-5 space-x-6 lg:justify-end">
-      <a
-        href="#"
-        class="inline-flex items-center justify-center px-4 py-2 text-base font-medium leading-6 text-white whitespace-no-wrap bg-primary border border-transparent rounded-md shadow-sm hover:bg-primary-focus focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary"
-      >
-        Sign In
-      </a>
+      <SignIn />
     </div>
   </div>
 </section>

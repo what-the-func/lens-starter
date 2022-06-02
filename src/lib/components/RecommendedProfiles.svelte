@@ -1,6 +1,6 @@
 <script lang="ts">
   import { operationStore, query } from '@urql/svelte'
-  import recommendedProfilesQuery from '$lib/graphql/queries/recommendedProfiles'
+  import recommendedProfilesQuery from '$lib/graphql/queries/recommendedProfilesQuery'
 
   const profiles = operationStore(recommendedProfilesQuery)
   query(profiles)
