@@ -63,9 +63,10 @@
 
 {#if provider}
   <button
-    class="btn btn-xs sm:btn-sm md:btn-md btn-primary hover:btn-primary-focus"
+    class="btn btn-xs sm:btn-sm md:btn-md btn-primary hover:btn-primary-focus space-x-2 font-semibold"
     on:click={signIn}
   >
-    Sign In
+    <img class="mr-0.5 w-4 h-4 invert" height="16" width="16" src="/img/lens.png" alt="Lens Logo">
+    <div>Login</div>
   </button>
 {/if}

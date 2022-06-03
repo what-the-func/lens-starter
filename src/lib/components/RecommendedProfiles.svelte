@@ -1,6 +1,6 @@
 <script lang="ts">
   import { operationStore, query } from '@urql/svelte'
-  import recommendedProfilesQuery from '$lib/graphql/queries/recommendedProfilesQuery'
+  import recommendedProfilesQuery from '$lib/graphql/queries/recommendedProfiles'
 
   const profiles = operationStore(recommendedProfilesQuery)
   query(profiles)
@@ -12,12 +12,18 @@
     console.log($profiles.data)
     recommendedProfiles = $profiles.data.recommendedProfiles
   }
+
+  let fetchError = false
+  $: if ($profiles.error) {
+    fetchError = true
+    console.error($profiles.error)
+  }
 </script>
 
-<article class="prose mb-2">
+<article class="prose mb-3">
   <h3>✨ Who to follow</h3>
 </article>
-<div class="rounded shadow-xl">
+<div class="rounded-lg shadow-lg shadow-secondary border p-3">
   <div class="overflow-x-auto w-full">
     <table class="table w-full">
       <tbody>
@@ -28,14 +34,16 @@
                 <div class="avatar">
                   <div class="mask mask-squircle w-12 h-12">
                     <img
-                      src={ profile.picture ? profile.picture.original.url : '/img/default_avatar.jpg' }
+                      src={profile.picture
+                        ? profile.picture.original.url
+                        : '/img/default_avatar.jpg'}
                       alt="Avatar Tailwind CSS Component"
                     />
                   </div>
                 </div>
                 <div>
-                  <div class="font-bold">{ profile.name }</div>
-                  <div class="text-sm opacity-50">{ profile.handle }</div>
+                  <div class="font-bold">{profile.name}</div>
+                  <div class="text-sm text-magic">{profile.handle}</div>
                 </div>
               </div>
             </td>
@@ -60,6 +68,48 @@
             </th>
           </tr>
         {/each}
+        {#if recommendedProfiles.length === 0 && !fetchError}
+          {#each [0, 1, 2, 3, 4] as i}
+            <tr>
+              <td>
+                <div class="flex items-center space-x-3">
+                  <div class="avatar">
+                    <div class="mask mask-squircle w-12 h-12">
+                      <div class="rounded-full w-12 h-12 bg-slate-600 animate-pulse" />
+                    </div>
+                  </div>
+                  <div class="space-y-3">
+                    <div class="rounded-lg bg-slate-600 w-28 h-3 animate-pulse" />
+                    <div class="rounded-lg bg-slate-600 w-20 h-3 animate-pulse" />
+                  </div>
+                </div>
+              </td>
+              <th>
+                <div class="rounded w-6 h-6 bg-slate-600 animate-pulse" />
+              </th>
+            </tr>
+          {/each}
+        {/if}
+        {#if fetchError}
+          <div class="alert alert-error shadow-lg">
+            <div>
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                class="stroke-current flex-shrink-0 h-6 w-6"
+                fill="none"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"
+                />
+              </svg>
+              <span class="font-semibold">Failed to fetch recommended profiles.</span>
+            </div>
+          </div>
+        {/if}
       </tbody>
     </table>
   </div>
