@@ -1,4 +1,4 @@
-import { Client, getClient } from '@urql/svelte'
+import type { Client } from '@urql/svelte'
 import { STORAGE_KEY } from './constants'
 import { initGraphQLClient } from './graphql/client'
 import refreshTokenMutation from './graphql/mutations/refreshTokenMutation'

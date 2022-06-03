@@ -3,12 +3,23 @@
   import recommendedProfilesQuery from '$lib/graphql/queries/recommendedProfiles'
   import { goto } from '$app/navigation'
   import type { Profile } from '$lib/graphql/types'
+  import { getPolygonSdk } from '$lib/eth-sdk'
+  import { wallet } from '$lib/stores/wallet'
+  import type { JsonRpcSigner } from '@ethersproject/providers'
 
   const profiles = operationStore(recommendedProfilesQuery)
   query(profiles)
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   let recommendedProfiles: Array<Profile> = []
+
+  const followUser = async (id: number) => {
+    const signer = wallet.provider?.getSigner()
+    const sdk = getPolygonSdk(<JsonRpcSigner>signer)
+    const lensHub = sdk.lensHub
+    const tx = await lensHub.follow([id], [[]])
+    await tx.wait()
+  }
 
   $: if ($profiles.data) {
     recommendedProfiles = $profiles.data.recommendedProfiles
@@ -64,7 +75,7 @@
             </td>
 
             <th>
-              <button class="btn btn-ghost glass btn-xs">
+              <button class="btn btn-ghost glass btn-xs" on:click={() => followUser(profile.id)}>
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   fill="none"

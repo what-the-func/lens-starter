@@ -11,7 +11,6 @@
   import { wallet } from '$lib/stores/wallet'
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  let provider: any
   let client = getClient()
 
   onMount(async () => {
@@ -48,7 +47,7 @@
       const authData = await client
         .mutation(authenticateMutation, {
           request: {
-            address: provider.selectedAddress,
+            address: wallet.address,
             signature
           }
         })
@@ -68,7 +67,7 @@
       const result = await client
         .query(defaultProfileQuery, {
           request: {
-            ethereumAddress: provider.selectedAddress
+            ethereumAddress: wallet.address
           }
         })
         .toPromise()
