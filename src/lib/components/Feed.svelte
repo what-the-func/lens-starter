@@ -1,5 +1,7 @@
+<script>
+  import NotImplemented from './NotImplemented.svelte'
+</script>
+
 <div class="text-center">
-    <article class="prose">
-        <h2>🥲 You don't follow anyone</h2>
-    </article>
+  <NotImplemented />
 </div>

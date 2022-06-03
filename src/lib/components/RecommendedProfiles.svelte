@@ -1,6 +1,7 @@
 <script lang="ts">
   import { operationStore, query } from '@urql/svelte'
   import recommendedProfilesQuery from '$lib/graphql/queries/recommendedProfiles'
+  import { goto } from '$app/navigation'
 
   const profiles = operationStore(recommendedProfilesQuery)
   query(profiles)
@@ -31,7 +32,10 @@
             <td>
               <div class="flex items-center space-x-3">
                 <div class="avatar">
-                  <div class="mask mask-squircle w-12 h-12">
+                  <div
+                    class="mask mask-squircle w-12 h-12 cursor-pointer"
+                    on:click={() => goto(`/u/${profile.handle}`)}
+                  >
                     <img
                       src={profile.picture
                         ? profile.picture.original.url
@@ -41,8 +45,18 @@
                   </div>
                 </div>
                 <div>
-                  <div class="font-bold">{profile.name}</div>
-                  <div class="text-sm text-magic">{profile.handle}</div>
+                  <div
+                    class="font-bold cursor-pointer"
+                    on:click={() => goto(`/u/${profile.handle}`)}
+                  >
+                    {profile.name}
+                  </div>
+                  <div
+                    class="text-sm text-magic cursor-pointer"
+                    on:click={() => goto(`/u/${profile.handle}`)}
+                  >
+                    {profile.handle}
+                  </div>
                 </div>
               </div>
             </td>

@@ -2,7 +2,7 @@
   import SignIn from './SignIn.svelte'
 </script>
 
-<section class="w-full px-8 text-gray-700 bg-base-100">
+<section class="sticky top-0 w-full px-8 text-gray-700 bg-base-300 shadow-xl z-50">
   <div
     class="container flex flex-col flex-wrap items-center justify-between py-5 mx-auto md:flex-row max-w-7xl"
   >

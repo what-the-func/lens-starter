@@ -1,6 +1,7 @@
 <script lang="ts">
   import detectEthereumProvider from '@metamask/detect-provider'
   import { getClient } from '@urql/svelte'
+  import { goto } from '$app/navigation'
   import challengeRequestQuery from '$lib/graphql/queries/challengeRequestQuery'
   import defaultProfileQuery from '$lib/graphql/queries/defaultProfileQuery'
   import authenticateMutation from '$lib/graphql/mutations/authenticateMutation'
@@ -33,9 +34,13 @@
       }
 
       const challenge = await client
-        .query(challengeRequestQuery, {
-          request: { address: provider.selectedAddress }
-        })
+        .query(
+          challengeRequestQuery,
+          {
+            request: { address: provider.selectedAddress }
+          },
+          { requestPolicy: 'network-only' }
+        )
         .toPromise()
 
       const { text } = challenge.data.challenge
@@ -88,15 +93,20 @@
 {#if profile}
   <div class="dropdown dropdown-end">
     <div class="avatar" tabindex="0">
-      <div class="w-8 rounded-full ring ring-primary ring-offset-base-100 ring-offset-2">
-        <img src={profile.picture ? profile.picture.original.url : '/img/default_avatar.jpg'} />
+      <div
+        class="w-8 rounded-full ring ring-primary ring-offset-base-100 ring-offset-2 cursor-pointer"
+      >
+        <img
+          src={profile.picture ? profile.picture.original.url : '/img/default_avatar.jpg'}
+          alt={profile.handle}
+        />
       </div>
     </div>
     <ul
       tabindex="0"
-      class="dropdown-content menu p-2 shadow bg-base-300 rounded-box w-56 text-base-content"
+      class="dropdown-content menu p-2 shadow bg-base-100 rounded-box w-56 text-base-content"
     >
-      <li>
+      <li on:click={() => goto(`/u/${profile.handle}`)}>
         <div class="grid grid-flow-row gap-0">
           <div class="font-bold">Logged in as</div>
           <div class="text-sm text-magic">{profile.handle}</div>
