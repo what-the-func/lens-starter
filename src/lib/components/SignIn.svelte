@@ -1,27 +1,25 @@
 <script lang="ts">
-  import detectEthereumProvider from '@metamask/detect-provider'
   import { getClient } from '@urql/svelte'
   import { goto } from '$app/navigation'
   import challengeRequestQuery from '$lib/graphql/queries/challengeRequestQuery'
   import defaultProfileQuery from '$lib/graphql/queries/defaultProfileQuery'
   import authenticateMutation from '$lib/graphql/mutations/authenticateMutation'
   import { onMount } from 'svelte'
-  import { ethers } from 'ethers'
   import { parseJwt, logout } from '$lib/utils'
   import { STORAGE_KEY } from '$lib/constants'
   import userProfile from '$lib/stores/userProfile'
-import { upgradeGraphQLClient } from '$lib/graphql/client';
+  import { wallet } from '$lib/stores/wallet'
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   let provider: any
   let client = getClient()
 
   onMount(async () => {
-    provider = await detectEthereumProvider()
     attemptLogin()
   })
 
-  const attemptLogin = () => {
+  const attemptLogin = async () => {
+    await wallet.connect('builtin')
     const storageData = JSON.parse(<string>localStorage.getItem(STORAGE_KEY))
     if (storageData) {
       $userProfile = storageData.profile
@@ -30,23 +28,22 @@ import { upgradeGraphQLClient } from '$lib/graphql/client';
 
   const signIn = async () => {
     try {
-      if (!provider.selectedAddress) {
-        await provider.request({ method: 'eth_requestAccounts' })
+      if (!$wallet.address) {
+        await wallet.connect('builtin')
       }
 
       const challenge = await client
         .query(
           challengeRequestQuery,
           {
-            request: { address: provider.selectedAddress }
+            request: { address: $wallet.address }
           },
           { requestPolicy: 'network-only' }
         )
         .toPromise()
 
       const { text } = challenge.data.challenge
-      const ethersProvider = new ethers.providers.Web3Provider(provider)
-      const signature = await ethersProvider.getSigner().signMessage(text)
+      const signature = await wallet.provider?.getSigner().signMessage(text)
 
       const authData = await client
         .mutation(authenticateMutation, {

@@ -2,6 +2,9 @@
   import Feed from '$lib/components/Feed.svelte'
   import RecommendedProfiles from '$lib/components/RecommendedProfiles.svelte'
   import userProfile from '$lib/stores/userProfile'
+  import { wallet } from '$lib/stores/wallet'
+
+  console.log($wallet)
 </script>
 
 {#if $userProfile}
