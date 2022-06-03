@@ -9,7 +9,6 @@
   let recommendedProfiles: Record<string, any>[] = []
 
   $: if ($profiles.data) {
-    console.log($profiles.data)
     recommendedProfiles = $profiles.data.recommendedProfiles
   }
 
@@ -75,17 +74,17 @@
                 <div class="flex items-center space-x-3">
                   <div class="avatar">
                     <div class="mask mask-squircle w-12 h-12">
-                      <div class="rounded-full w-12 h-12 bg-slate-600 animate-pulse" />
+                      <div class="rounded-full w-12 h-12 shimmer" />
                     </div>
                   </div>
                   <div class="space-y-3">
-                    <div class="rounded-lg bg-slate-600 w-28 h-3 animate-pulse" />
-                    <div class="rounded-lg bg-slate-600 w-20 h-3 animate-pulse" />
+                    <div class="rounded-lg w-28 h-3 shimmer" />
+                    <div class="rounded-lg w-20 h-3 shimmer" />
                   </div>
                 </div>
               </td>
               <th>
-                <div class="rounded w-6 h-6 bg-slate-600 animate-pulse" />
+                <div class="rounded w-6 h-6 shimmer" />
               </th>
             </tr>
           {/each}

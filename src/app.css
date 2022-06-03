@@ -4,5 +4,10 @@
 @tailwind utilities;
 
 .text-magic {
-    @apply text-transparent font-semibold bg-clip-text bg-gradient-to-r from-secondary to-primary;
+  @apply text-transparent font-semibold bg-clip-text bg-gradient-to-r from-secondary to-primary;
+}
+
+.shimmer {
+  @apply animate-pulse;
+  @apply bg-gray-300;
 }

@@ -1,5 +1,6 @@
 import { Client, getClient } from '@urql/svelte'
 import { STORAGE_KEY } from './constants'
+import { initGraphQLClient } from './graphql/client'
 import refreshTokenMutation from './graphql/mutations/refreshTokenMutation'
 
 export function parseJwt(token: string) {
@@ -44,4 +45,9 @@ export async function refreshAuthToken(client: Client, token: any) {
   } catch (err) {
     console.log('error:', err)
   }
+}
+
+export const logout = () => {
+  localStorage.removeItem(STORAGE_KEY)
+  initGraphQLClient()
 }
