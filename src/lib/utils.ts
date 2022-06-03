@@ -37,7 +37,8 @@ export async function refreshAuthToken(client: Client, token: any) {
       JSON.stringify({
         accessToken,
         refreshToken,
-        exp
+        exp,
+        profile: token.profile
       })
     )
 

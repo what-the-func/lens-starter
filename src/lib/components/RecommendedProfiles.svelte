@@ -2,12 +2,13 @@
   import { operationStore, query } from '@urql/svelte'
   import recommendedProfilesQuery from '$lib/graphql/queries/recommendedProfiles'
   import { goto } from '$app/navigation'
+  import type { Profile } from '$lib/graphql/types'
 
   const profiles = operationStore(recommendedProfilesQuery)
   query(profiles)
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  let recommendedProfiles: Record<string, any>[] = []
+  let recommendedProfiles: Array<Profile> = []
 
   $: if ($profiles.data) {
     recommendedProfiles = $profiles.data.recommendedProfiles
@@ -36,12 +37,13 @@
                     class="mask mask-squircle w-12 h-12 cursor-pointer"
                     on:click={() => goto(`/u/${profile.handle}`)}
                   >
-                    <img
-                      src={profile.picture
-                        ? profile.picture.original.url
-                        : '/img/default_avatar.jpg'}
-                      alt="Avatar Tailwind CSS Component"
-                    />
+                    {#if profile.picture && profile.picture.__typename == 'MediaSet'}
+                      <img src={profile.picture.original.url} alt={profile.handle} />
+                    {:else if profile.picture?.__typename == 'NftImage'}
+                      <img src={profile.picture.uri} alt={profile.handle} />
+                    {:else}
+                      <img src="/img/default_avatar.jpg" alt={profile.handle} />
+                    {/if}
                   </div>
                 </div>
                 <div>
@@ -87,9 +89,7 @@
               <td>
                 <div class="flex items-center space-x-3">
                   <div class="avatar">
-                    <div class="mask mask-squircle w-12 h-12">
-                      <div class="rounded-full w-12 h-12 shimmer" />
-                    </div>
+                    <div class="rounded-full w-12 h-12 shimmer" />
                   </div>
                   <div class="space-y-3">
                     <div class="rounded-lg w-28 h-3 shimmer" />

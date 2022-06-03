@@ -9,11 +9,12 @@
   import { ethers } from 'ethers'
   import { parseJwt, logout } from '$lib/utils'
   import { STORAGE_KEY } from '$lib/constants'
+  import userProfile from '$lib/stores/userProfile'
+import { upgradeGraphQLClient } from '$lib/graphql/client';
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   let provider: any
   let client = getClient()
-  let profile: Record<string, any> | null = null
 
   onMount(async () => {
     provider = await detectEthereumProvider()
@@ -23,7 +24,7 @@
   const attemptLogin = () => {
     const storageData = JSON.parse(<string>localStorage.getItem(STORAGE_KEY))
     if (storageData) {
-      profile = storageData.profile
+      $userProfile = storageData.profile
     }
   }
 
@@ -74,48 +75,51 @@
           }
         })
         .toPromise()
-      profile = result.data.defaultProfile
+      $userProfile = result.data.defaultProfile
       localStorage.setItem(
         STORAGE_KEY,
         JSON.stringify({
           accessToken,
           refreshToken,
           exp: accessTokenData.exp,
-          profile
+          profile: $userProfile
         })
       )
     } catch (err) {
       console.error(err)
     }
-  }
+  } 
 </script>
 
-{#if profile}
+{#if $userProfile !== null}
   <div class="dropdown dropdown-end">
     <div class="avatar" tabindex="0">
       <div
         class="w-8 rounded-full ring ring-primary ring-offset-base-100 ring-offset-2 cursor-pointer"
       >
-        <img
-          src={profile.picture ? profile.picture.original.url : '/img/default_avatar.jpg'}
-          alt={profile.handle}
-        />
+        {#if $userProfile.picture && $userProfile.picture.__typename == 'MediaSet'}
+          <img src={$userProfile.picture.original.url} alt={$userProfile.handle} />
+        {:else if $userProfile.picture?.__typename == 'NftImage'}
+          <img src={$userProfile.picture.uri} alt={$userProfile.handle} />
+        {:else}
+          <img src="/img/default_avatar.jpg" alt={$userProfile.handle} />
+        {/if}
       </div>
     </div>
     <ul
       tabindex="0"
       class="dropdown-content menu p-2 shadow bg-base-100 rounded-box w-56 text-base-content"
     >
-      <li on:click={() => goto(`/u/${profile.handle}`)}>
+      <li on:click={() => goto(`/u/${$userProfile?.handle}`)}>
         <div class="grid grid-flow-row gap-0">
           <div class="font-bold">Logged in as</div>
-          <div class="text-sm text-magic">{profile.handle}</div>
+          <div class="text-sm text-magic">{$userProfile.handle}</div>
         </div>
       </li>
       <li>
         <button
           on:click={() => {
-            profile = null
+            $userProfile = null
             logout()
           }}
         >
