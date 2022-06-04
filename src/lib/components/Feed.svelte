@@ -1,6 +1,5 @@
 <script lang="ts">
   import userProfile from '$lib/stores/userProfile'
-  import { goto } from '$app/navigation'
   import { KQL_Timeline } from '$lib/graphql/_kitql/graphqlStores'
   import { browser } from '$app/env'
   import { upgradeGQLClient } from '$lib/utils'
@@ -22,7 +21,7 @@
     })
   }
 
-  $: feed = $KQL_Timeline.data?.timeline.items.slice(0, 10) as Publication[]
+  $: feed = $KQL_Timeline.data?.timeline.items as Publication[]
 </script>
 
 <article class="prose mb-3">
