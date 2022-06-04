@@ -1,6 +1,7 @@
 import type { Client } from '@urql/svelte'
 import { STORAGE_KEY } from './constants'
 import { initGraphQLClient } from './graphql/client'
+import { kitQLClient } from './graphql/kitQLClient'
 import refreshTokenMutation from './graphql/mutations/refreshTokenMutation'
 
 export function parseJwt(token: string) {
@@ -51,4 +52,25 @@ export async function refreshAuthToken(client: Client, token: any) {
 export const logout = () => {
   localStorage.removeItem(STORAGE_KEY)
   initGraphQLClient()
+}
+
+export const upgradeGQLClient = () =>{
+  const { accessToken } = JSON.parse(<string>localStorage.getItem(STORAGE_KEY))
+  const headers = kitQLClient.getHeaders()
+  kitQLClient.setHeaders({
+    ...headers,
+    'x-access-token': `Bearer ${accessToken}`
+  })
+}
+
+export const getPictureUrl = (picture: any) => {
+  if (picture.__typename === 'MediaSet') {
+    return picture.original.url
+  }
+
+  if (picture.__typename === 'NftImage') {
+    return picture.uri
+  }
+
+  return null
 }

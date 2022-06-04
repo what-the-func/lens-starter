@@ -1,0 +1,16 @@
+schema:
+  - 'https://api.lens.dev/graphql'
+documents:
+  - '**/*.gql'
+generates:
+  ./src/lib/graphql/_kitql/graphqlTypes.ts:
+    plugins:
+      - typescript
+      - typescript-operations
+      - typed-document-node
+      - typescript-document-nodes
+  ./src/lib/graphql/_kitql/graphqlStores.ts:
+    plugins:
+      - '@kitql/graphql-codegen'
+    config:
+      importBaseTypesFrom: $lib/graphql/_kitql/graphqlTypes

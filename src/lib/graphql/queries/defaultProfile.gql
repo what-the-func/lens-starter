@@ -1,0 +1,17 @@
+query defaultProfile ($request: DefaultProfileRequest!) {
+  defaultProfile(request: $request) {
+    id
+    name
+    handle
+    picture {
+      ... on NftImage {
+        uri
+      }
+      ... on MediaSet {
+        original {
+          url
+        }
+      }
+    }
+  }
+}
