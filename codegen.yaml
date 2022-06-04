@@ -9,6 +9,8 @@ generates:
       - typescript-operations
       - typed-document-node
       - typescript-document-nodes
+    config:
+      dedupeFragments: true
   ./src/lib/graphql/_kitql/graphqlStores.ts:
     plugins:
       - '@kitql/graphql-codegen'

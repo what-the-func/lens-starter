@@ -1,0 +1,21 @@
+fragment MetadataOutputFields on MetadataOutput {
+  name
+  description
+  content
+  media {
+    original {
+      ...MediaFields
+    }
+    small {
+      ...MediaFields
+    }
+    medium {
+      ...MediaFields
+    }
+  }
+  attributes {
+    displayType
+    traitType
+    value
+  }
+}

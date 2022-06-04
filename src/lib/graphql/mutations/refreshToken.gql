@@ -1,0 +1,6 @@
+mutation refreshToken($request: RefreshRequest!) {
+  refresh(request: $request) {
+    accessToken
+    refreshToken
+  }
+}

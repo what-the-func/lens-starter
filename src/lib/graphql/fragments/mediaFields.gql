@@ -1,0 +1,6 @@
+fragment MediaFields on Media {
+  url
+  width
+  height
+  mimeType
+}

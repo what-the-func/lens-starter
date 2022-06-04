@@ -1,8 +1,6 @@
-import type { Client } from '@urql/svelte'
 import { STORAGE_KEY } from './constants'
-import { initGraphQLClient } from './graphql/client'
 import { kitQLClient } from './graphql/kitQLClient'
-import refreshTokenMutation from './graphql/mutations/refreshTokenMutation'
+import type { Maybe, ProfileMedia } from '$lib/graphql/_kitql/graphqlTypes'
 
 export function parseJwt(token: string) {
   const base64Url = token.split('.')[1]
@@ -19,42 +17,11 @@ export function parseJwt(token: string) {
   return JSON.parse(jsonPayload)
 }
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export async function refreshAuthToken(client: Client, token: any) {
-  try {
-    const authData = await client
-      .mutation(refreshTokenMutation, {
-        request: {
-          refreshToken: token.refreshToken
-        }
-      })
-      .toPromise()
-
-    const { accessToken, refreshToken } = authData.data.refresh
-    const exp = parseJwt(refreshToken).exp
-
-    localStorage.setItem(
-      STORAGE_KEY,
-      JSON.stringify({
-        accessToken,
-        refreshToken,
-        exp,
-        profile: token.profile
-      })
-    )
-
-    return accessToken
-  } catch (err) {
-    console.log('error:', err)
-  }
-}
-
 export const logout = () => {
   localStorage.removeItem(STORAGE_KEY)
-  initGraphQLClient()
 }
 
-export const upgradeGQLClient = () =>{
+export const upgradeGQLClient = () => {
   const { accessToken } = JSON.parse(<string>localStorage.getItem(STORAGE_KEY))
   const headers = kitQLClient.getHeaders()
   kitQLClient.setHeaders({
@@ -63,7 +30,11 @@ export const upgradeGQLClient = () =>{
   })
 }
 
-export const getPictureUrl = (picture: any) => {
+export const getPictureUrl = (picture: Maybe<ProfileMedia> | undefined) => {
+  if (!picture) {
+    return null
+  }
+
   if (picture.__typename === 'MediaSet') {
     return picture.original.url
   }
@@ -71,6 +42,4 @@ export const getPictureUrl = (picture: any) => {
   if (picture.__typename === 'NftImage') {
     return picture.uri
   }
-
-  return null
 }

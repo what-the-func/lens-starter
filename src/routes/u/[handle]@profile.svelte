@@ -1,14 +1,13 @@
 <script context="module" lang="ts">
   import type { Load } from '@sveltejs/kit'
-  import { KQL_Profile as profileStore } from '$lib/graphql/_kitql/graphqlStores'
+  import { KQL_Profile } from '$lib/graphql/_kitql/graphqlStores'
 
   export const load: Load = async ({ fetch, params }) => {
     const { handle } = params
 
-    await profileStore.queryLoad({
+    await KQL_Profile.queryLoad({
       fetch,
-      variables: { request: { handles: [handle], limit: 1 } },
-      cache: false
+      variables: { request: { handles: [handle], limit: 1 } }
     })
 
     return {}
@@ -17,12 +16,10 @@
 
 <script lang="ts">
   import NotImplemented from '$lib/components/NotImplemented.svelte'
-  import type { Profile } from '$lib/graphql/_kitql/graphqlTypes'
   import { getPictureUrl } from '$lib/utils'
+  import type { Profile } from '$lib/graphql/_kitql/graphqlTypes';
 
-  let profile: Profile
-
-  $: if ($profileStore.data) profile = <Profile>$profileStore.data.profiles.items[0]
+  $: profile = $KQL_Profile.data?.profiles.items[0] as Profile
 </script>
 
 {#if profile}

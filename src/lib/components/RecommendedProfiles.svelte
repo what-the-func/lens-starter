@@ -4,9 +4,14 @@
   import { getPolygonSdk } from '$lib/eth-sdk'
   import { wallet } from '$lib/stores/wallet'
   import type { JsonRpcSigner } from '@ethersproject/providers'
-  import { KQL_RecommendedProfiles as recommended } from '$lib/graphql/_kitql/graphqlStores'
+  import { KQL_RecommendedProfiles } from '$lib/graphql/_kitql/graphqlStores'
+  import { getPictureUrl } from '$lib/utils'
+  import type { Profile } from '$lib/graphql/_kitql/graphqlTypes'
 
-  $: browser && recommended.query()
+  $: browser && KQL_RecommendedProfiles.query()
+
+  $: profiles = $KQL_RecommendedProfiles.data?.recommendedProfiles.slice(0, 5) as Profile[]
+  $: errors = $KQL_RecommendedProfiles.errors
 
   const followUser = async (id: number) => {
     const signer = wallet.provider?.getSigner()
@@ -24,38 +29,39 @@
   <div class="overflow-x-auto w-full">
     <table class="table w-full">
       <tbody>
-        {#if $recommended.data}
-          {#each $recommended.data.recommendedProfiles.slice(0, 5) as profile}
+        {#if profiles}
+          {#each profiles as profile}
             <tr>
               <td>
                 <div class="flex items-center space-x-3">
                   <div class="avatar">
-                    <div
-                      class="mask mask-squircle w-12 h-12 cursor-pointer"
-                      on:click={() => goto(`/u/${profile.handle}`)}
+                    <a
+                      sveltekit:prefetch
+                      class="mask mask-circle w-12 h-12 cursor-pointer"
+                      href={`/u/${profile.handle}`}
                     >
-                      {#if profile.picture && profile.picture.__typename == 'MediaSet'}
-                        <img src={profile.picture.original.url} alt={profile.handle} />
-                      {:else if profile.picture?.__typename == 'NftImage'}
-                        <img src={profile.picture.uri} alt={profile.handle} />
-                      {:else}
-                        <img src="/img/default_avatar.jpg" alt={profile.handle} />
-                      {/if}
-                    </div>
+                      <img
+                        src={getPictureUrl(profile.picture) || '/img/default_avatar.jpg'}
+                        alt={profile.handle}
+                      />
+                    </a>
                   </div>
                   <div>
-                    <div
+                    <a
+                      sveltekit:prefetch
                       class="font-bold cursor-pointer"
-                      on:click={() => goto(`/u/${profile.handle}`)}
+                      href={`/u/${profile.handle}`}
                     >
                       {profile.name}
-                    </div>
-                    <div
-                      class="text-sm text-magic cursor-pointer"
+                    </a>
+                    <a
+                      sveltekit:prefetch
+                      class="text-sm text-magic cursor-pointer block"
                       on:click={() => goto(`/u/${profile.handle}`)}
+                      href={`/u/${profile.handle}`}
                     >
                       {profile.handle}
-                    </div>
+                    </a>
                   </div>
                 </div>
               </td>
@@ -81,7 +87,7 @@
             </tr>
           {/each}
         {/if}
-        {#if !$recommended.data && !$recommended.errors}
+        {#if !profiles && !errors}
           {#each [0, 1, 2, 3, 4] as i}
             <tr>
               <td>
@@ -101,7 +107,7 @@
             </tr>
           {/each}
         {/if}
-        {#if $recommended.errors}
+        {#if errors}
           <div class="alert alert-error shadow-lg">
             <div>
               <svg

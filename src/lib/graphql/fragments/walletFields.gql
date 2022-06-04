@@ -1,0 +1,6 @@
+fragment WalletFields on Wallet {
+  address
+  defaultProfile {
+    ...ProfileFields
+  }
+}

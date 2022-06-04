@@ -1,5 +1,6 @@
 import adapter from '@sveltejs/adapter-auto'
 import preprocess from 'svelte-preprocess'
+import watchAndRun from '@kitql/vite-plugin-watch-and-run'
 
 /** @type {import('@sveltejs/kit').Config} */
 const config = {
@@ -14,9 +15,15 @@ const config = {
   kit: {
     adapter: adapter(),
     vite: {
-      optimizeDeps: {
-        exclude: ['@urql/svelte']
-      }
+      plugins: [
+        watchAndRun([
+          {
+            watch: '**/*.(gql|graphql)',
+            run: 'npm run generate' // to trigger the script "gen" of your package.json
+            // delay: 500, Optional parameter to delay the run command.
+          }
+        ])
+      ]
     }
   }
 }

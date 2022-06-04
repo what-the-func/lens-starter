@@ -1,0 +1,25 @@
+fragment CommentBaseFields on Comment {
+  id
+  profile {
+    ...ProfileFields
+  }
+  stats {
+    ...PublicationStatsFields
+  }
+  metadata {
+    ...MetadataOutputFields
+  }
+  createdAt
+  collectModule {
+    ...CollectModuleFields
+  }
+  referenceModule {
+    ... on FollowOnlyReferenceModuleSettings {
+      type
+    }
+  }
+  appId
+  collectedBy {
+    ...WalletFields
+  }
+}

@@ -1,0 +1,19 @@
+fragment CommentFields on Comment {
+  ...CommentBaseFields
+  mainPost {
+    ... on Post {
+      ...PostFields
+    }
+    ... on Mirror {
+      ...MirrorBaseFields
+      mirrorOf {
+        ... on Post {
+          ...PostFields
+        }
+        ... on Comment {
+          ...CommentMirrorOfFields
+        }
+      }
+    }
+  }
+}

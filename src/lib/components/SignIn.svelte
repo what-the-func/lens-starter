@@ -1,17 +1,16 @@
 <script lang="ts">
-  import { getClient } from '@urql/svelte'
   import { goto } from '$app/navigation'
-  import challengeRequestQuery from '$lib/graphql/queries/challengeRequestQuery'
-  import defaultProfileQuery from '$lib/graphql/queries/defaultProfileQuery'
-  import authenticateMutation from '$lib/graphql/mutations/authenticateMutation'
   import { onMount } from 'svelte'
   import { parseJwt, logout } from '$lib/utils'
   import { STORAGE_KEY } from '$lib/constants'
   import userProfile from '$lib/stores/userProfile'
   import { wallet } from '$lib/stores/wallet'
-
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  let client = getClient()
+  import {
+    KQL_ChallengeRequest as challengeRequest,
+    KQL_Authenticate as authenticate,
+    KQL_DefaultProfile as defaultProfile
+  } from '$lib/graphql/_kitql/graphqlStores'
+  import type { AuthChallengeResult, AuthenticationResult, Profile } from '$lib/graphql/_kitql/graphqlTypes'
 
   onMount(async () => {
     attemptLogin()
@@ -31,29 +30,28 @@
         await wallet.connect('builtin')
       }
 
-      const challenge = await client
-        .query(
-          challengeRequestQuery,
-          {
-            request: { address: $wallet.address }
-          },
-          { requestPolicy: 'network-only' }
-        )
-        .toPromise()
+      await challengeRequest.query({
+        variables: {
+          request: { address: $wallet.address }
+        },
+        settings: {
+          policy: 'network-only'
+        }
+      })
 
-      const { text } = challenge.data.challenge
+      const { text } = $challengeRequest.data?.challenge as AuthChallengeResult
       const signature = await wallet.provider?.getSigner().signMessage(text)
 
-      const authData = await client
-        .mutation(authenticateMutation, {
+      await authenticate.mutate({
+        variables: {
           request: {
             address: wallet.address,
             signature
           }
-        })
-        .toPromise()
+        }
+      })
 
-      const { accessToken, refreshToken } = authData.data.authenticate
+      const { accessToken, refreshToken } = $authenticate.data?.authenticate as AuthenticationResult
       const accessTokenData = parseJwt(accessToken)
       localStorage.setItem(
         STORAGE_KEY,
@@ -64,14 +62,16 @@
         })
       )
 
-      const result = await client
-        .query(defaultProfileQuery, {
+      await defaultProfile.query({
+        variables: {
           request: {
             ethereumAddress: wallet.address
           }
-        })
-        .toPromise()
-      $userProfile = result.data.defaultProfile
+        }
+      })
+
+      $userProfile = $defaultProfile.data?.defaultProfile as Profile
+
       localStorage.setItem(
         STORAGE_KEY,
         JSON.stringify({
@@ -84,7 +84,7 @@
     } catch (err) {
       console.error(err)
     }
-  } 
+  }
 </script>
 
 {#if $userProfile !== null}

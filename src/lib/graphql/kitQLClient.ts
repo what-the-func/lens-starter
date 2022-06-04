@@ -6,5 +6,6 @@ export type AppHeaders = {
 
 export const kitQLClient = new KitQLClient<AppHeaders>({
   url: 'https://api.lens.dev',
-  headersContentType: 'application/json'
+  headersContentType: 'application/json',
+  logType: ['client', 'server', 'operationAndvariables'],
 })
