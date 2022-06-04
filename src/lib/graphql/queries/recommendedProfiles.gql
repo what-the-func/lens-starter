@@ -1,21 +1,5 @@
 query recommendedProfiles {
   recommendedProfiles {
-    id
-    name
-    handle
-    picture {
-      ... on NftImage {
-        contractAddress
-        tokenId
-        uri
-        verified
-      }
-      ... on MediaSet {
-        original {
-          url
-        }
-      }
-      __typename
-    }
+    ...ProfileFields
   }
 }
