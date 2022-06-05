@@ -1,33 +1,51 @@
 <script lang="ts">
   import { goto } from '$app/navigation'
   import { onMount } from 'svelte'
-  import { parseJwt, logout } from '$lib/utils'
+  import { parseJwt, logout, refreshToken } from '$lib/utils'
   import { STORAGE_KEY } from '$lib/constants'
   import userProfile from '$lib/stores/userProfile'
-  import { wallet } from '$lib/stores/wallet'
+  import { wallet, chain } from '$lib/stores/wallet'
   import {
     KQL_ChallengeRequest as challengeRequest,
     KQL_Authenticate as authenticate,
     KQL_DefaultProfile as defaultProfile
   } from '$lib/graphql/_kitql/graphqlStores'
-  import type { AuthChallengeResult, AuthenticationResult, Profile } from '$lib/graphql/_kitql/graphqlTypes'
+  import type {
+    AuthChallengeResult,
+    AuthenticationResult,
+    Profile
+  } from '$lib/graphql/_kitql/graphqlTypes'
 
   onMount(async () => {
     attemptLogin()
   })
 
   const attemptLogin = async () => {
-    await wallet.connect('builtin')
     const storageData = JSON.parse(<string>localStorage.getItem(STORAGE_KEY))
     if (storageData) {
+      await connect()
+      await refreshToken()
       $userProfile = storageData.profile
     }
+  }
+
+  const connect = async (method = 'builtin') => {
+    if (await wallet.connect(method)) {
+      if ($chain.chainId !== '137') {
+        await wallet.disconnect()
+        logout()
+        alert('Please connect to Polygon Mainnet')
+        return false
+      }
+    }
+
+    return true
   }
 
   const signIn = async () => {
     try {
       if (!$wallet.address) {
-        await wallet.connect('builtin')
+        if (!await connect()) return
       }
 
       await challengeRequest.query({
