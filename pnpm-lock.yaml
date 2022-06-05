@@ -27,6 +27,8 @@ specifiers:
   ethers: ^5.6.8
   graphql: ^16.5.0
   graphql-tag: ^2.12.6
+  linkify-html: ^3.0.5
+  linkifyjs: ^3.0.5
   postcss: ^8.4.14
   postcss-load-config: ^3.1.4
   prettier: ^2.6.2
@@ -58,6 +60,8 @@ dependencies:
   ethers: 5.6.8
   graphql: 16.5.0
   graphql-tag: 2.12.6_graphql@16.5.0
+  linkify-html: 3.0.5_linkifyjs@3.0.5
+  linkifyjs: 3.0.5
   web3w: 0.3.2-beta.22_0eddcae3d7866eaaf67abb1e8d98d16c
   web3w-walletconnect-loader: 0.3.2
 
@@ -4300,6 +4304,18 @@ packages:
 
   /lines-and-columns/1.2.4:
     resolution: {integrity: sha512-7ylylesZQ/PV29jhEDl3Ufjo6ZX7gCqJr5F7PKrqc93v7fzSymt1BpwEU8nAUXs8qzzvqhbjhK5QZg6Mt/HkBg==}
+
+  /linkify-html/3.0.5_linkifyjs@3.0.5:
+    resolution: {integrity: sha512-3O7HEYjkugX+C/G2C2wyBmIt8Mt0pmeaHNIxRHodCFeQQeSxSoZHR+5hC1pi0WrmoEvfnSemyZyYTM8w3lo9cA==}
+    peerDependencies:
+      linkifyjs: ^3.0.0
+    dependencies:
+      linkifyjs: 3.0.5
+    dev: false
+
+  /linkifyjs/3.0.5:
+    resolution: {integrity: sha512-1Y9XQH65eQKA9p2xtk+zxvnTeQBG7rdAXSkUG97DmuI/Xhji9uaUzaWxRj6rf9YC0v8KKHkxav7tnLX82Sz5Fg==}
+    dev: false
 
   /listr-silent-renderer/1.1.1:
     resolution: {integrity: sha512-L26cIFm7/oZeSNVhWB6faeorXhMg4HNlb/dS/7jHhr708jxlXrtrBWo4YUxZQkc6dGoxEAe6J/D3juTRBUzjtA==}

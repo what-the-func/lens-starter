@@ -1,6 +1,8 @@
 <script lang="ts">
   import type { Publication } from '$lib/graphql/_kitql/graphqlTypes'
   import { getPictureUrl } from '$lib/utils'
+  import * as linkify from 'linkifyjs'
+  import linkifyHtml from 'linkify-html'
 
   export let pub: Publication
 </script>
@@ -15,19 +17,19 @@
     </a>
   </div>
 
-  <div class="ml-4">
-    <p class="text-sm text-base-content line-clamp-2">
-      {pub.metadata.content}
-    </p>
-
+  <div class="ml-4 space-y-2">
     <div class="mt-2 sm:flex sm:items-center sm:gap-2">
-      <p class="hidden sm:block sm:text-xs sm:text-base-content">
+      <p class="hidden sm:block sm:font-bold sm:text-base-content">
         {pub.__typename}ed by
         <a href={`/u/${pub.profile.handle}`} class="font-medium underline text-magic">
           {pub.profile.handle}
         </a>
       </p>
     </div>
+    <p class="text-sm text-base-content line-clamp-2">
+      {@html linkifyHtml(pub.metadata.content, { className: 'text-magic font-semibold' })}
+    </p>
+
     <div class="flex gap-8 items-center pt-3 -ml-2 text-gray-500">
       <button aria-label="Comment">
         <a

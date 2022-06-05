@@ -54,6 +54,8 @@
     "ethers": "^5.6.8",
     "graphql": "^16.5.0",
     "graphql-tag": "^2.12.6",
+    "linkify-html": "^3.0.5",
+    "linkifyjs": "^3.0.5",
     "web3w": "^0.3.2-beta.22",
     "web3w-walletconnect-loader": "^0.3.2"
   }
