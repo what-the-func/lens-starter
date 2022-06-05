@@ -19,4 +19,5 @@ fragment MirrorBaseFields on Mirror {
     }
   }
   appId
+  __typename
 }

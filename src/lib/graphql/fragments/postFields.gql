@@ -22,4 +22,5 @@ fragment PostFields on Post {
   collectedBy {
     ...WalletFields
   }
+  __typename
 }

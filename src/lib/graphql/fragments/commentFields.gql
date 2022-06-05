@@ -16,4 +16,5 @@ fragment CommentFields on Comment {
       }
     }
   }
+  __typename
 }
